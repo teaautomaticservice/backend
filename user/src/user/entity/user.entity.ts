@@ -39,8 +39,8 @@ export class User extends BaseEntity {
     @Column({ nullable: false, type: 'varchar', length: 64 })
     public salt: string;
 
-    @Column({ nullable: true, type: 'varchar', length: 64 })
-    public confirmationToken: string;
+    @Column({ nullable: true, type: 'varchar', length: 1000 })
+    public refreshToken: string;
 
     @CreateDateColumn()
     public readonly createdAt: Date;
@@ -56,11 +56,6 @@ export class User extends BaseEntity {
         const salt = await genSalt();
         this.salt = salt;
         this.password = await hash(this.password, salt);
-    }
-
-    @BeforeInsert()
-    private setConfirmationToken(): void {
-        this.confirmationToken = randomBytes(size).toString(encodin);
     }
 
     public getRandomStringBytes(): string {

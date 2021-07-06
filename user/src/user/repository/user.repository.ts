@@ -1,21 +1,19 @@
-import {
-    ConflictException,
-    InternalServerErrorException,
-    NotFoundException,
-    UnauthorizedException,
-    UnprocessableEntityException,
-} from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { EntityRepository, Repository } from 'typeorm';
-import { SignInDTO } from '../dto/signIn.dto';
+import { SaveRefreshToken } from '../dto/saveRefreshToken.dto';
 
+import { SignInDTO } from '../dto/signIn.dto';
 import { SingUpDTO } from '../dto/signUp.dto';
+import { UserDTO } from '../dto/user.dto';
+import { UserWrapper } from '../wrapper/user.wrapper';
 import { User } from './../entity/user.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-    public async createUser(singUpDTO: SingUpDTO): Promise<User> {
+    public async createUser(singUpDTO: SingUpDTO): Promise<UserDTO> {
         if (!(singUpDTO.password === singUpDTO.passwordRepeat)) {
-            throw new UnprocessableEntityException('Passwords do not match');
+            throw new RpcException('Passwords do not match');
         }
 
         const user = this.create(singUpDTO);
@@ -26,30 +24,25 @@ export class UserRepository extends Repository<User> {
             .execute()
             .catch((error) => {
                 if (error.code.toString() === '23505') {
-                    throw new ConflictException('Email address already in use');
+                    throw new RpcException('Email address already in use');
                 } else {
-                    throw new InternalServerErrorException('Error while saving user to database');
+                    throw new RpcException('Error while saving user to database');
                 }
             });
 
-        delete user.password;
-        delete user.salt;
-
-        return user;
+        return new UserWrapper(user);
     }
 
-    public async getUserByEmail(signInDTO: SignInDTO): Promise<User> {
+    public async getUserByEmail(signInDTO: SignInDTO): Promise<UserDTO> {
         const user = await this.createQueryBuilder()
-            .select(['u.id', 'u.firstName', 'u.lastName', 'u.email', 'u.isActive', 'u.salt', 'u.password'])
+            .select(['u.id', 'u.firstName', 'u.lastName', 'u.email', 'u.isActive', 'u.salt', 'u.password', 'u.refreshToken'])
             .from(User, 'u')
             .where('u.email = :email', { email: signInDTO.email })
             .andWhere('u.isActive = :isActive', { isActive: true })
             .getOne()
             .catch(() => {
-                throw new InternalServerErrorException('Error while saving user to database');
+                throw new RpcException('Error while saving user to database');
             });
-
-        console.log(user);
 
         if (!user) {
             throw new NotFoundException('User not found');
@@ -57,12 +50,20 @@ export class UserRepository extends Repository<User> {
 
         const isCheckPassword = await user.checkPassword(signInDTO.password);
         if (!isCheckPassword) {
-            throw new UnauthorizedException('Invalid credentials');
+            throw new RpcException('Invalid credentials');
         }
 
-        delete user.password;
-        delete user.salt;
+        return new UserWrapper(user);
+    }
 
-        return user;
+    public async saveRefreshToken({ userId, refreshToken }: SaveRefreshToken): Promise<void> {
+        await this.createQueryBuilder()
+            .update(User)
+            .set({ refreshToken })
+            .where('id = :userId', { userId })
+            .execute()
+            .catch(() => {
+                throw new RpcException('Error while saving user to database');
+            });
     }
 }

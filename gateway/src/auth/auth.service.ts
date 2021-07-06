@@ -1,8 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
 import { SignInDTO } from './dto/signIn.dto';
 import { SignUpDTO } from './dto/signUp.dto';
+import { CreateToken } from './interfaces/createToken.interface';
+import { Tokens } from './interfaces/tokens.interface';
+import { DataWrapper } from './wrapper/data.wrapper';
 
 @Injectable()
 export class AuthService {
@@ -16,19 +19,35 @@ export class AuthService {
         await this.userServiceClient.connect();
     }
 
-    public async signIn(data: SignInDTO): Promise<any> {
-        const user = await this.userServiceClient.send('user-sign-in', data).toPromise();
-        const accessToken = await this.tokenServiceClient.send('create-access-token', user).toPromise();
-        const refreshToken = await this.tokenServiceClient.send('create-refresh-token', user).toPromise();
+    public async signIn(userData: SignInDTO): Promise<Tokens> {
+        try {
+            const user = await this.userServiceClient.send('user-sign-in', userData).toPromise();
+            const accessToken = await this.createAccessToken(user);
 
-        return { accessToken, refreshToken };
+            return { accessToken, refreshToken: user.refreshToken };
+        } catch (error) {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
     }
 
-    public async signUp(data: SignUpDTO): Promise<any> {
-        const user = await this.userServiceClient.send('user-sign-up', data).toPromise();
-        const accessToken = await this.tokenServiceClient.send('create-access-token', user).toPromise();
-        const refreshToken = await this.tokenServiceClient.send('create-refresh-token', user).toPromise();
+    public async signUp(userData: SignUpDTO): Promise<Tokens> {
+        try {
+            const tokenData = new DataWrapper(userData);
+            const accessToken = await this.createAccessToken(tokenData);
+            const refreshToken = await this.createRefresgToken(tokenData);
+            await this.userServiceClient.send('user-sign-up', { ...userData, refreshToken }).toPromise();
 
-        return { accessToken, refreshToken };
+            return { accessToken, refreshToken };
+        } catch (error) {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private async createAccessToken(user: CreateToken): Promise<string> {
+        return await this.tokenServiceClient.send('create-access-token', user).toPromise();
+    }
+
+    private async createRefresgToken(user: CreateToken): Promise<string> {
+        return await this.tokenServiceClient.send('create-refresh-token', user).toPromise();
     }
 }

@@ -9,12 +9,12 @@ export class AuthController {
     constructor(private authService: AuthService) {}
 
     @Post('/sign-in')
-    public async signIn(@Body() data: SignInDTO): Promise<any> {
-        return await this.authService.signIn(data);
+    public async signIn(@Body() userData: SignInDTO): Promise<any> {
+        return await this.authService.signIn(userData);
     }
 
     @Post('/sign-up')
-    public async signUp(@Body() data: SignUpDTO): Promise<any> {
-        return await this.authService.signUp(data);
+    public async signUp(@Body() userData: SignUpDTO): Promise<any> {
+        return await this.authService.signUp(userData);
     }
 }
