@@ -1,18 +1,16 @@
-FROM node:14.9.0-alpine AS development
+FROM node:14.9.0-alpine AS base
+WORKDIR /usr/src/app
+COPY ./package.json yarn.lock ./
+
+FROM base AS development
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
-WORKDIR /usr/src/token
-COPY ./package.json yarn.lock ./
-RUN yarn install --production=false
+RUN yarn install
 COPY ./ ./
-CMD ["npm", "run", "start:dev"]
 
-FROM node:14.9.0-alpine AS production
+FROM base AS production
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
-WORKDIR /usr/src/token
-COPY ./package.json yarn.lock ./
-RUN yarn install --production=true
+RUN yarn install
 COPY ./ ./
-COPY --from=development ./usr/src/token/dist ./dist
-CMD ["npm", "run", "start:prod"]
+RUN yarn build

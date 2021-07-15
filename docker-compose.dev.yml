@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  token:
+    build:
+      target: development
+    volumes:
+      - ./token:/usr/src/app:cached
+      - /usr/src/app/node_modules
+    command: yarn start:dev
+
+  user:
+    build:
+      target: development
+    volumes:
+      - ./user:/usr/src/app:cached
+      - /usr/src/app/node_modules
+    command: yarn start:dev
+
+  gateway:
+    build:
+      target: development
+    volumes:
+      - ./gateway:/usr/src/app:cached
+      - /usr/src/app/node_modules
+    command: yarn start:dev

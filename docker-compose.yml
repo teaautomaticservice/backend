@@ -1,4 +1,4 @@
-version: '3'
+version: "3.8"
 
 services:
   postgres:
@@ -16,7 +16,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - backend
+      - microservices_backend
     env_file:
       - .env
 
@@ -24,14 +24,11 @@ services:
     build:
       context: ./token
       dockerfile: ./docker/Dockerfile
-      target: development
     restart: always
     container_name: token_container
     hostname: token
-    volumes:
-      - ./token:/usr/src/app:cached
     networks:
-      - backend
+      - microservices_backend
     env_file:
       - .env
     depends_on:
@@ -43,14 +40,11 @@ services:
     build:
       context: ./user
       dockerfile: ./docker/Dockerfile
-      target: development
     restart: always
     container_name: user_container
     hostname: user
-    volumes:
-      - ./user:/usr/src/app:cached
     networks:
-      - backend
+      - microservices_backend
     env_file:
       - .env
     depends_on:
@@ -62,14 +56,11 @@ services:
     build:
       context: ./gateway
       dockerfile: ./docker/Dockerfile
-      target: development
     restart: always
     container_name: gateway_container
     hostname: gateway
-    volumes:
-      - ./gateway:/usr/src/app:cached
     networks:
-      - backend
+      - microservices_backend
     env_file:
       - .env
     depends_on:
@@ -87,7 +78,7 @@ services:
       - ${API_GATEWAY_PORT}:${API_GATEWAY_PORT}
 
 networks:
-  backend:
+  microservices_backend:
     driver: bridge
 
 volumes:
