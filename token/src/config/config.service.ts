@@ -4,6 +4,7 @@ export class ConfigService {
     constructor() {
         this.envConfig = {
             port: process.env.TOKEN_SERVICE_PORT,
+            host: process.env.TOKEN_SERVICE_HOST,
             accessConfig: {
                 secret: process.env.JWT_ACCESS_TOKEN_SECRET,
                 expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME,

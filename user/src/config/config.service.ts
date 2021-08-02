@@ -4,6 +4,7 @@ export class ConfigService {
     constructor() {
         this.envConfig = {
             port: process.env.USER_SERVICE_PORT,
+            host: process.env.USER_SERVICE_HOST,
             databasePassword: process.env.DATABASE_PASSWORD,
             databaseUsername: process.env.DATABASE_USERNAME,
             databasePort: process.env.DATABASE_PORT,
