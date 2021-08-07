@@ -1,5 +1,5 @@
 export interface CreateToken {
-    email: string;
-    lastName: string;
-    firstName: string;
+    readonly  email: string;
+    readonly  lastName: string;
+    readonly  firstName: string;
 }

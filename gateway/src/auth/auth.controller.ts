@@ -1,12 +1,15 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { ApiTags } from "@nestjs/swagger";
 
-import { AuthService } from './auth.service';
-import { SignInDTO } from './dto/signIn.dto';
-import { SignUpDTO } from './dto/signUp.dto';
+import { AuthService } from 'gateway/auth/auth.service';
+import { SignInDTO } from 'gateway/auth/dto/signIn.dto';
+import { SignUpDTO } from 'gateway/auth/dto/signUp.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService) {
+    }
 
     @Post('/sign-in')
     public async signIn(@Body() userData: SignInDTO): Promise<any> {

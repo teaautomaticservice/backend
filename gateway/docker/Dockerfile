@@ -1,4 +1,4 @@
-FROM node:14.9.0-alpine AS base
+FROM node:lts-alpine AS base
 WORKDIR /usr/src/app
 COPY ./package.json yarn.lock ./
 
@@ -13,3 +13,4 @@ ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 RUN yarn install
 COPY ./ ./
+RUN yarn build

@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class SignInDTO {
     @ApiProperty()
-    public email: string;
+    public readonly email: string;
 
     @ApiProperty()
-    public password: string;
+    public readonly password: string;
 }

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ClientProxyFactory } from '@nestjs/microservices';
 
-import { ConfigService } from './config/config.service';
-import { AuthModule } from './auth/auth.module';
+import { ConfigService } from 'gateway/config/config.service';
+import { AuthModule } from 'gateway/auth/auth.module';
 
 @Module({
     imports: [AuthModule],
@@ -10,21 +10,14 @@ import { AuthModule } from './auth/auth.module';
     providers: [
         ConfigService,
         {
-            provide: 'TOKEN_SERVICE',
+            provide: 'AUTH_SERVICE',
             useFactory: (configService: ConfigService) => {
-                const tokenServiceOptions = configService.get('tokenService');
-                return ClientProxyFactory.create(tokenServiceOptions);
-            },
-            inject: [ConfigService],
-        },
-        {
-            provide: 'USER_SERVICE',
-            useFactory: (configService: ConfigService) => {
-                const userServiceOptions = configService.get('userService');
-                return ClientProxyFactory.create(userServiceOptions);
+                const authServiceOptions = configService.get('authService');
+                return ClientProxyFactory.create(authServiceOptions);
             },
             inject: [ConfigService],
         },
     ],
 })
-export class AppModule {}
+export class AppModule {
+}

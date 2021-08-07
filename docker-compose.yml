@@ -20,12 +20,12 @@ services:
     env_file:
       - .env
 
-  token:
+  auth:
     build:
-      context: ./token
+      context: ./auth
       dockerfile: ./docker/Dockerfile
     restart: always
-    container_name: token_container
+    container_name: auth_container
     hostname: token
     networks:
       - microservices_backend
@@ -35,22 +35,11 @@ services:
       - postgres
     links:
       - postgres
-
-  user:
-    build:
-      context: ./user
-      dockerfile: ./docker/Dockerfile
-    restart: always
-    container_name: user_container
-    hostname: user
-    networks:
-      - microservices_backend
-    env_file:
-      - .env
-    depends_on:
-      - postgres
-    links:
-      - postgres
+    environment:
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_HOST: ${DATABASE_HOST}
 
   gateway:
     build:
@@ -65,17 +54,11 @@ services:
       - .env
     depends_on:
       - postgres
-      - token
-      - user
+      - auth
     links:
       - postgres
-    environment:
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_USERNAME: ${DATABASE_USERNAME}
-      DATABASE_PORT: ${DATABASE_PORT}
-      DATABASE_HOST: ${DATABASE_HOST}
     ports:
-      - ${API_GATEWAY_PORT}:${API_GATEWAY_PORT}
+      - ${GATEWAY_SERVICE_PORT}:${GATEWAY_SERVICE_PORT}
 
 networks:
   microservices_backend:
