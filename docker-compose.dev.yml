@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   database:
-    container_name: database_container_prod
+    container_name: database_container_dev
 
   auth:
     build:
