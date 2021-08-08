@@ -1,9 +1,13 @@
 version: "3.8"
 
 services:
+  database:
+    container_name: database_container_prod
+
   auth:
     build:
       target: development
+    container_name: auth_container_dev
     volumes:
       - ./auth:/usr/src/app:cached
       - auth_app:/usr/src/app/node_modules
@@ -12,6 +16,7 @@ services:
   gateway:
     build:
       target: development
+    container_name: gateway_container_dev
     volumes:
       - ./gateway:/usr/src/app:cached
       - gateway_app:/usr/src/app/node_modules

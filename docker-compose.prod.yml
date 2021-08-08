@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  database:
+    container_name: database_container_prod
+
+  auth:
+    build:
+      target: production
+    container_name: auth_container_prod
+    volumes:
+      - ./auth:/usr/src/app:cached
+    command: yarn start:prod
+
+  gateway:
+    build:
+      target: production
+    container_name: gateway_container_prod
+    volumes:
+      - ./gateway:/usr/src/app:cached
+    command: yarn start:prod
