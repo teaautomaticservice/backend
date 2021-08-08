@@ -30,9 +30,9 @@ services:
     env_file:
       - .env
     depends_on:
-      - postgres
+      - database
     links:
-      - postgres
+      - database
     environment:
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_USERNAME: ${DATABASE_USERNAME}
@@ -50,10 +50,10 @@ services:
     env_file:
       - .env
     depends_on:
-      - postgres
+      - database
       - auth
     links:
-      - postgres
+      - database
     ports:
       - ${GATEWAY_SERVICE_PORT}:${GATEWAY_SERVICE_PORT}
 
