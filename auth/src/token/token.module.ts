@@ -9,6 +9,6 @@ import { TokenService } from 'auth/token/token.service';
   imports: [JwtModule.register({})],
   controllers: [TokenController],
   providers: [TokenService, ConfigService],
-  exports: [TokenService]
+  exports: [TokenService],
 })
 export class TokenModule {}

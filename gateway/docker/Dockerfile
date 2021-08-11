@@ -11,6 +11,7 @@ COPY ./ ./
 FROM base AS production
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
+RUN yarn global add @nestjs/cli
 RUN yarn install
 COPY ./ ./
 RUN yarn build
