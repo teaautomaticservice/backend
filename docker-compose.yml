@@ -4,21 +4,31 @@ services:
   database:
     image: postgres:latest
     restart: always
-    hostname: database
     environment:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_DB: ${DATABASE_NAME}
       PG_DATA: ./var/lib/postgresql/data
     ports:
-      - ${DATABASE_PORT}:${DATABASE_PORT}
+      - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
       - microservices_backend
     env_file:
       - .env
-
+  nginx:
+    image: nginx
+    restart: always
+    expose:
+      - "80"
+    ports:
+      - "80:80"
+    
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      microservices_backend: null
   auth:
     build:
       context: ./auth
@@ -41,8 +51,8 @@ services:
 
   gateway:
     build:
-      context: ./gateway
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: docker/Dockerfile
     restart: always
     hostname: gateway
     networks:
