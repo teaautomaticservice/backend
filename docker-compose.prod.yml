@@ -9,7 +9,7 @@ services:
       target: production
     container_name: auth_container_prod
     volumes:
-      - ./auth:/usr/src/app:cached
+      - ./auth:/usr/src/app
     command: yarn start:prod
 
   gateway:
@@ -17,5 +17,5 @@ services:
       target: production
     container_name: gateway_container_prod
     volumes:
-      - ./gateway:/usr/src/app:cached
+      - ./gateway:/usr/src/app
     command: yarn start:prod

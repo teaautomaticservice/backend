@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from 'auth/database/typeorm.config';
 
 @Module({
-    imports: [TypeOrmModule.forRoot(typeOrmConfig)],
+  imports: [TypeOrmModule.forRoot(typeOrmConfig)],
 })
-export class DatabaseModule {
-}
+export class DatabaseModule {}

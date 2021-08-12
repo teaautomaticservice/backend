@@ -1,3 +1,3 @@
 export class TokenDTO {
-    public readonly token: string;
+  public readonly token: string;
 }
