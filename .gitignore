@@ -32,3 +32,19 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+
+# other
+.vscode
+*.bak
+.builds
+.idea
+.idea/*
+docker-compose.local.yml
